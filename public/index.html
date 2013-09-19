@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+	<head>
+		<title>Prefetch Nightmare</title>
+		<link rel="stylesheet" href="/public/css/styles.css">
+	</head>
+	<body>
+		HELLO THE CRAZY
+		<a class="pushState" title="#one" href="/one/one">pushState 1</a>
+		<a class="pushState" title="#two" href="/two/two">pushState 2</a>
+		<a class="pushState" title="#three" href="/three/three/things/2">pushState 3</a>
+		<a class="replaceState" title="#four" href="/four/four">replaceState 4</a>
+		<a class="pushState" title="#five" href="/five/five">pushState 5</a>
+		<a class="back" title="#six" href="/six">back 6</a>
+		<a class="back" title="#seven" href="/seven">back 7</a>
+		<a class="forward" title="#eight" href="/eight">forward 8</a>
+		<a class="forward" title="#nine" href="/nine">forward 9</a>
+
+		<script src="/public/js/main.js"></script>
+		<script src="/public/js/init.js"></script>
+		<script>
+			//Example of some Javascript that would load another script then hit an API... like GA
+			var head, script1, xhr;
+			head = document.getElementsByTagName("head").item(0);
+			script = document.createElement("script");
+			script.setAttribute("src", "public/js/lazyload2.js");
+			head.appendChild(script);
+			
+			//How bout another Javascript that might hit a rate limited API... like a Twitter
+			
+			xhr = new XMLHttpRequest();
+			xhr.open('GET', '/json/api.json', true);
+			xhr.responseType = 'json';
+			xhr.onload = function(e) {
+			  if (this.status == 200) {}
+			};
+			xhr.send();
+			
+		</script>
+		<script>
+			//setup the listener for those links
+			document.addEventListener("click", function(e) {
+				switch (e.target.className) {
+					case "pushState":
+						history.pushState({href:e.target.getAttribute("href")}, e.target.getAttribute("title"), e.target.getAttribute("href"));
+						break;
+
+					case "replaceState":
+						history.replaceState({href:e.target.getAttribute("href")}, e.target.getAttribute("title"), e.target.getAttribute("href"));
+						break;
+
+					case "back":
+						history.back();
+						break;
+
+					case "forward":
+						history.forward();
+						break;
+				}
+				
+				e.preventDefault();
+				return false;
+			}, false);
+			
+			setTimeout(function() {
+				//now lets play around with the history API a wee bit ourselves
+				history.pushState({href:"/manually1"}, "Manually 1 Title", "/manually1");
+				history.pushState({href:"/manually2"}, "Manually 2 Title", "/manually2");
+				history.pushState({href:"/manually3"}, "Manually 3 Title", "/manually3/complex");
+				history.replaceState({href:"/manually4"}, "Manually 4 Title", "/manually4");
+				history.pushState({href:"/manually5"}, "Manually 5 Title", "/manually5");
+				history.back();
+				history.back();
+				history.forward();
+				history.forward();
+			}, 500);
+			
+		</script>
+	</body>
+</html>
